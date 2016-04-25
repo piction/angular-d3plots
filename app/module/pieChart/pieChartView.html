@@ -1,0 +1,63 @@
+
+<div ng-if="vm.tooltip.show"  tip-x="{{vm.tooltip.x}}" tip-y="{{vm.tooltip.y}}">
+    <div> 
+        
+        <span ng-repeat= "model in vm.tooltip.data">
+            <span>{{model.label}}</span> 
+        </span> 
+        <span ng-if="vm.tooltip.data.length == 1"> 
+             <span>{{model.label}}</span> 
+        </span>
+        
+    </div>
+</div>
+
+<div class="container">
+    <form name="datainputform" class="form-horizontal">
+        <div class="form-group">
+  
+            <label>
+                Graph Height:
+                <input type="number" name="value" ng-model="vm.model.graphHeight">
+            </label>
+            
+             <label>
+                Minimum segement percentage:
+                <input type="number" name="value" ng-model="vm.model.minSegmentPercentage">
+            </label>
+            
+            <label>
+                Donut ratio portion:
+                <input type="number" step="0.01" name="value" ng-model="vm.model.donutRatio">
+            </label>
+            
+            
+            <div> <label>Data Input:  </label></div>
+            <div ng-repeat="m in vm.model.data">
+                <input type="text" name="value" ng-model="m.label"> 
+                <input type="number" name="value" ng-model="m.value"> 
+                <input type="text" name="value" ng-model="m.color"> 
+                <input type="text" name="value" ng-model="m.extra"> 
+            </div>
+            
+        </div>
+       
+            
+
+    </form>
+</div>
+
+<d3-pie-chart 
+        data="vm.model.data" 
+        donut-radius-portion = {{vm.model.donutRatio}}
+        min-segment-percentage= {{vm.model.minSegmentPercentage}}
+        height ={{vm.model.graphHeight}}
+        min-segment-name = "OTHER"
+        on-clicked-segment ="vm.createTooltip"
+      >
+</d3-pie-chart >
+
+
+
+
+

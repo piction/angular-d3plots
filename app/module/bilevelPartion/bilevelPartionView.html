@@ -1,0 +1,24 @@
+
+
+<div class="container">
+    <form name="datainputform" class="form-horizontal">
+        <div class="form-group">
+  
+            <label>
+                Graph Height:
+                <input type="number" name="value" ng-model="vm.model.graphHeight">
+            </label>
+            
+             
+        </div>
+    </form>
+</div>
+
+
+<d3-bilevel-partion data="vm.model.data" height={{vm.model.graphHeight}}
+    ></d3-bilevel-partion>
+
+<button ng-click=vm.updateData()>Update Data</button>
+<div> <label>Data Input:  </label></div>
+<textarea style="width:100%;height:700px" ng-model="vm.model.jsonData" ></textarea>
+

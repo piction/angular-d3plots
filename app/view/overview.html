@@ -1,0 +1,11 @@
+<div>
+<nav>
+    <ul class="nav list-group ">
+        <li ng-repeat="module in vm.model.moduleItems">
+            <a href="#{{ module.name }}"> <span> {{module.label}} </span> </a>
+            </li>
+        </ul>
+
+</nav>
+</div>
+<div ng-view></div>

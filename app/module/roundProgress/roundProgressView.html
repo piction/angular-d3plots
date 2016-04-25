@@ -1,0 +1,68 @@
+<div class="container">
+    <form name="datainputform" class="form-horizontal">
+        <div class="form-group">
+            <label>
+                Progress value:
+                <input type="number" name="value" ng-model="vm.model.data" pattern="^[-+]?([0-9]|[1-9][0-9]|100)*\.?[0-9]+$">
+            </label>
+            <label>
+                Progress baseline value:
+                <input type="number" name="value" ng-model="vm.model.progressBaseData" pattern="^[-+]?([0-9]|[1-9][0-9]|100)*\.?[0-9]+$">
+            </label>
+            <label>
+                Progress Offset startangle:
+                <input type="number" name="value" ng-model="vm.model.progressOffsetAngleDegree">
+            </label>
+            <label>
+                Graph Height:
+                <input type="number" name="value" ng-model="vm.model.graphHeight">
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                Progress color:
+                <input colorpicker colorpicker-position="right" ng-model="vm.model.progressColor" type="text" ng-style="{'background-color':vm.model.progressColor}">
+            </label>
+            <label>
+                Progress background:
+                <input colorpicker colorpicker-position="right" ng-model="vm.model.progressBgColor" type="text" ng-style="{'background-color':vm.model.progressBgColor}">
+            </label>
+            <label>
+                Progress overflow color :
+                <input colorpicker colorpicker-position="right" ng-model="vm.model.progressOverflowColor" type="text" ng-style="{'background-color':vm.model.progressOverflowColor}">
+            </label>
+        </div>
+        
+            <div class="form-group">
+                <label>
+                Extra font scale:
+                <input type="number" name="value" ng-model="vm.model.extraFontScale">
+            </label>
+                <label>
+                Extra base stroke thickness:
+                <input type="number" name="value" ng-model="vm.model.baseStrokeThickness">
+            </label>
+        </div>
+    </form>
+</div>
+
+
+<d3-round-progress 
+        data="vm.model.data" 
+        font-scale = {{vm.model.extraFontScale}}
+        base-stroke-thickness = {{vm.model.baseStrokeThickness}}
+        base-data = "vm.model.progressBaseData"
+        height={{vm.model.graphHeight}} 
+        color={{vm.model.progressColor}}
+        offset-angle-degree={{vm.model.progressOffsetAngleDegree}} 
+        overflow-color={ {vm.model.progressOverflowColor}}
+        bgcolor={{vm.model.progressBgColor}} 
+        show-label="true">
+</d3-round-progress>
+
+
+
+
+
+
+

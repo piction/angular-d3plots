@@ -4,12 +4,12 @@
 		concat = require('gulp-concat'),
 		sourcemaps = require('gulp-sourcemaps'),
 		templateCache = require('gulp-angular-templatecache'),
-        less = require('gulp-less'),
 		connect = require('gulp-connect'),
 		gOpen = require('gulp-open'),
 		del = require('del'),
 		Q = require('Q'),
 		cssMinify = require('gulp-minify-css'),
+		sass = require('gulp-sass'),
 		uglify = require('gulp-uglify'),
 		util = require('gulp-util'),
 		uncache = require('gulp-uncache'),
@@ -36,7 +36,6 @@
             'external_scripts/bower_components/angular-bootstrap-colorpicker/css/colorpicker.min.css'
 		];
         
-/* development */
 	gulp.task('html', function() {
 		return gulp.src('app/**/*.html')
 			.pipe(templateCache({
@@ -57,16 +56,13 @@
 	});
     
     
-	// gulp.task('compile-less', function () {
-	// 	util.log( util.colors.green('compile less '));
-	// 	return gulp.src('css/main.less')
-	// 		.pipe(less({
-	// 			plugins: [autoprefix]
-	// 		}))
-	// 		.pipe(gulp.dest('css'));
-	// });
+	gulp.task('sass', function () {
+	return gulp.src('./css/sass/**/*.scss')
+		.pipe(sass().on('error', sass.logError))
+		.pipe(gulp.dest('./css/'));
+	});
 
-	gulp.task('compile-style', function () {
+	gulp.task('compile-style',['sass'], function () {
 		return gulp.src(cssDependencies.concat(['css/main.css']))
 			.pipe(sourcemaps.init())
 			.pipe(concat('main.css'))
@@ -113,9 +109,9 @@
 	gulp.task('watch-changes', function() {
 		gulp.watch('app/**/*.js', ['compile-javascript']);
 		gulp.watch('app/**/*.html', ['compile-javascript']);
-		gulp.watch('app/**/*.less', ['compile-style']);
-		gulp.watch('css/less/**/*.less', ['compile-style']);
-		gulp.watch('css/main.less', ['compile-style']);
+		gulp.watch('app/**/*.scss', ['compile-style']);
+		gulp.watch('css/sass/**/*.scss', ['compile-style']);
+		gulp.watch('css/main.scss', ['compile-style']);
 		gulp.watch('css/main.css', ['compile-style']);
 		gulp.watch('index.html', ['copy-index']);
     });

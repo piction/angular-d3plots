@@ -3,9 +3,9 @@
     angular.module('app').config([
         '$routeProvider', function($routeProvider) {
             $routeProvider.when('/', {
-                 controller: 'roundProgressController',
+                    controller: 'bilevelPartionController',
                     controllerAs: 'vm',
-                    templateUrl: 'app/module/roundProgress/roundProgressView.html'
+                    templateUrl: 'app/module/bilevelPartion/bilevelPartionView.html'
                 })
                 .when('/roundProgressbar', {
                     controller: 'roundProgressController',

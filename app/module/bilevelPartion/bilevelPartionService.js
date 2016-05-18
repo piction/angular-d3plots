@@ -12,7 +12,7 @@
         }
         return {
             getData: getData
-        }
+        } 
     }
 
     var declaration = ['$http', implementation];

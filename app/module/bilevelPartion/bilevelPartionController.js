@@ -11,7 +11,8 @@
            vm.model.data = JSON.parse(vm.model.jsonData);
        }
        
-       vm.model = {};         
+       vm.model = {};       
+       vm.model.strokeSize =100;  
        vm.model.graphHeight = 500;
        vm.model.data = {};
        vm.model.jsonData = undefined;

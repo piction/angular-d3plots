@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    function constructor($scope, CONFIG,toastr,bilevelPartionService){
+    function constructor($scope, CONFIG,toastr,dualBarChartService){
         var vm = this;
         
       vm.updateData = function () {
@@ -12,27 +12,27 @@
        }
        
        vm.model = {};       
-       vm.model.strokeSize =60;  
        vm.model.graphHeight = 500;
        vm.model.data = {};
        vm.model.jsonData = undefined;
-       vm.model.extraFontScale = 1.1;
+       vm.model.graphWidth = 500;
+       vm.model.maxBarWidth = 40;
        
        function loadTestData() {
                 function onSuccess(response) {
                     vm.model.data = response.data;
+                    vm.model.graphWidth = 0.8 * window.innerWidth;
                     vm.updateData();
                 }
                 function onFail(response) {
                     toastr.error("Fail loading testdata");
                 }
-                bilevelPartionService.getData().then(onSuccess, onFail);
+                dualBarChartService.getData().then(onSuccess, onFail);
+
         }       
         loadTestData();
-        
-
     }
 
-    var declaration = ['$scope','CONFIG', 'toastr','bilevelPartionService', constructor];
-    angular.module('app').controller('bilevelPartionController', declaration);
+    var declaration = ['$scope','CONFIG', 'toastr','dualBarChartService', constructor];
+    angular.module('app').controller('dualBarChartController', declaration);
 }());

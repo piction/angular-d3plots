@@ -3,9 +3,9 @@
     angular.module('app').config([
         '$routeProvider', function($routeProvider) {
             $routeProvider.when('/', {
-                    controller: 'bilevelPartionController',
+                    controller: 'dualBarChartController',
                     controllerAs: 'vm',
-                    templateUrl: 'app/module/bilevelPartion/bilevelPartionView.html'
+                    templateUrl: 'app/module/dualBarChart/dualBarChartView.html'
                 })
                 .when('/roundProgressbar', {
                     controller: 'roundProgressController',
@@ -16,6 +16,11 @@
                     controller: 'pieChartController',
                     controllerAs: 'vm',
                     templateUrl: 'app/module/pieChart/pieChartView.html'
+                })
+                .when('/dualBarChart', {
+                    controller: 'dualBarChartController',
+                    controllerAs: 'vm',
+                    templateUrl: 'app/module/dualBarChart/dualBarChartView.html'
                 })
                  .when('/bilevelPartion', {
                     controller: 'bilevelPartionController',

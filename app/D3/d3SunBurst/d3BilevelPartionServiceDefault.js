@@ -8,6 +8,7 @@
          function render(svg,dataIn, height , width,strokeRatio) {
              if (!dataIn ||$.isEmptyObject(dataIn)) return;
              
+
             height = height || 500 ;
             width = width || height;    
             strokeRatio = strokeRatio || 100;

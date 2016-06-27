@@ -1,4 +1,5 @@
-circle.bilevel-partion-center,
+
+ circle.bilevel-partion-center,
 path {
   cursor: pointer;
 }
@@ -7,8 +8,16 @@ circle.bilevel-partion-center {
   fill: none;
   pointer-events: all;
 }
+
 textpath.labels-text {
    letter-spacing: 1px;
+   font-size: 11px;
+      fill:#2F4F4F;
+    pointer-events: none;
+    cursor:pointer;
 }
 
- 
+.bilevel-center-tip {
+    pointer-events: none;
+    cursor:pointer;
+}

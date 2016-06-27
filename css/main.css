@@ -10,4 +10,12 @@ circle.bilevel-partion-center {
   pointer-events: all; }
 
 textpath.labels-text {
-  letter-spacing: 1px; }
+  letter-spacing: 1px;
+  font-size: 11px;
+  fill: #2F4F4F;
+  pointer-events: none;
+  cursor: pointer; }
+
+.bilevel-center-tip {
+  pointer-events: none;
+  cursor: pointer; }

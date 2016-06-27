@@ -8,7 +8,8 @@
         vm.model.moduleItems = [
             { name: "roundProgressbar" , label:"Round progress bar" },
             { name: "pieChart" , label:"Pie chart" },
-            { name: "bilevelPartion" , label:"Bilevel partion" }
+            { name: "bilevelPartion" , label:"Bilevel partion" },
+            { name: "dualBarChart" , label:"Dual bar chart" }
 
         ]
         

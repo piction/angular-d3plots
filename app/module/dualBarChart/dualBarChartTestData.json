@@ -1,0 +1,13 @@
+{
+     "color1": "#ebc11b",                                      
+     "color2": "#86d022",   
+     "barData":[
+         {"value1":50, "value2":510 , "label":"FLV01"},
+         {"value1":33, "value2":280 , "label":"FLV02"},
+         {"value1":16, "value2":80 , "label":"FLV03"},
+         {"value1":70, "value2":660 , "label":"FLV04"},
+         {"value1":40, "value2":570 , "label":"FLV05"}
+         
+         ]          
+                                   
+}

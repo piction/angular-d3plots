@@ -23,11 +23,10 @@
             // search latest index to join and keep a subtotal of the to join segements    
             for(var i=0; i < data.length ; i++)
             {       
-                subTotal += data[i].value;                
-                if(subTotal/ totalVal > minSegmentPercentage/100) {
-                    subTotal -= data[i].value;
+                if(data[i].value / totalVal > minSegmentPercentage/100) {
                     break;
                 } else {
+                    subTotal += data[i].value; 
                     joinedData.push(data[i]);
                     deleteIndx = i
                 }               

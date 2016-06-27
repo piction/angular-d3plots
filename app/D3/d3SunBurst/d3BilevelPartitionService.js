@@ -5,19 +5,22 @@
 
 	function implementation(d3) {
 
-		function render(svg, dataIn, height, width, strokeRatio) {
+		function render(svg, dataIn, height, width, strokeRatio,extraFontScale) {
 			if (!dataIn || $.isEmptyObject(dataIn)) return;
 
 			height = height || 500;
 			width = width || height;
 			strokeRatio = strokeRatio || 100;
+			extraFontScale = extraFontScale || 1;
 			var rootData = angular.copy(dataIn);     // make a copy to allow extending this data
 			var uniqueGraphIdprefix = "Bilevel-Id-" + Math.floor((Math.random() * 1000000) + 1) + "-";
 
-	
+			var radius = Math.min(width, height) / 2 - 10;		
+			var strokeWidth = Math.max(3, (1 / strokeRatio) / (0.0034));	 
+			var innerRadius = ((strokeWidth - 3) * radius / strokeWidth) + radius / strokeWidth;
 
-			var radius = Math.min(width, height) / 2 - 10;
-			var strokeWidth = Math.max(3, (1 / strokeRatio) / (0.0034));
+			var tipSize = extraFontScale *  innerRadius / 2.5;
+			
 			var hue = d3.scale.category10();
 			var luminance = d3.scale.sqrt()
 				.domain([0, 1e6])
@@ -69,13 +72,17 @@
 			var center = biLevelSvg.append("circle")
 				.attr("r", ((strokeWidth - 3) * radius / strokeWidth) + radius / strokeWidth)
 				.attr('class', 'bilevel-partion-center')
-				.on("click", zoomOut);
-
-			center.append("title")
-				.text("zoom out");
+				.on("click", zoomOut)				
+				.on('mouseover', function (d) {  createZoomTip() })
+				.on('mouseout',function(d) { deleteCenterTip();});
 
 			var partitioned_data = partition.nodes(rootData).slice(1);
-
+			
+			var generalTotal = 0;
+			for (var i =0; i < partitioned_data.length ; i++) {
+				generalTotal += ((partitioned_data[i].depth === 1) ? partitioned_data[i].sum : 0); 
+			}
+	
 			function createTextPathId (d) {return uniqueGraphIdprefix + d.name ;}
 			function addLablesOnHiddenArc(d, el , depth) {
 				// CREATE HIDDEN ARC FOR THE TEXTPATH CURVE (http://www.visualcinnamon.com/2015/09/placing-text-on-arcs.html)
@@ -136,7 +143,9 @@
 					var el = d3.select(this).attr("d");
 					addLablesOnHiddenArc(d,	el);
 				})
-				.on("click", zoomIn);
+				.on("click", zoomIn)
+				.on('mouseover', function (d) {  createCenterTip(d) })
+				.on('mouseout',function(d) { deleteCenterTip();});
 			
 			function drawTextsOnArc(textsElements) {
 				textsElements
@@ -161,7 +170,24 @@
 						}
 					});
 			}
-			
+			var tip  = biLevelSvg.append('g').attr('class','bilevel-center-tip')
+			function deleteCenterTip() {
+				   biLevelSvg.select('.bilevel-center-tip').selectAll('*').remove();
+			}
+			function createCenterTip(d) {
+				var ratioSegment = Math.floor((1000*d.sum)/generalTotal)/10;
+
+				var tipText =  tip.append('text')
+					  .style('font-size', tipSize + 'px')
+                      .attr({ x: 0, y: tipSize / 4, "text-anchor": 'middle' })
+					  .text( (ratioSegment > 10 ? Math.floor(ratioSegment) : ratioSegment) + ' %');
+			}
+			function createZoomTip() {
+				   var tipText =  tip.append('text')
+						.style('font-size', tipSize/2 + 'px')
+						.attr({ x: 0, y: tipSize / 8, "text-anchor": 'middle' })
+						.text("Zoom out");
+			}
 			
 			
 			
@@ -173,14 +199,13 @@
 		
 
 			function zoomIn(p) {
-				removeLabelsOnHiddenArc();
 				if (p.depth > 1) p = p.parent;
 				if (!p.children) return;
 				zoom(p, p);
 			}
 
 			function zoomOut(p) {
-				removeLabelsOnHiddenArc();
+			
 				if (!p || !p.parent || $.isEmptyObject(p.parent)) return;
 				zoom(p.parent, p);
 			}
@@ -188,7 +213,7 @@
 			// Zoom to the specified new root.
 			function zoom(root, p) {
 				if (document.documentElement.__transition__) return;
-
+				removeLabelsOnHiddenArc();
 				// Rescale outside angles to match the new layout.
 				var enterArc, exitArc, outsideAngle = d3.scale.linear().domain([0, 2 * Math.PI]);
 
@@ -229,6 +254,8 @@
 							this._current = enterArc(d);
 						})
 						.on("click", zoomIn)
+						.on('mouseover', function (d) {  createCenterTip(d) })
+						.on('mouseout',function(d) { deleteCenterTip();});
 
 				path.transition()
 					.style("fill-opacity", 1)

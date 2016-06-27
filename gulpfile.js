@@ -73,7 +73,9 @@
     
 
     gulp.task('copy-testdata', function() {
-        return gulp.src([ 'app/module/bilevelPartion/bilevelPartionTestData.json'])
+        return gulp.src([ 
+            'app/module/bilevelPartion/bilevelPartionTestData.json',
+            'app/module/dualBarChart/dualBarChartTestData.json'])
         .pipe(gulp.dest('dev/testData'));
     });
     

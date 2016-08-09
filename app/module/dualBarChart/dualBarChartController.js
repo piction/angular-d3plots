@@ -13,14 +13,17 @@
        
        vm.model = {};       
        vm.model.graphHeight = 500;
+        vm.model.graphWidth = 500;
        vm.model.data = {};
        vm.model.jsonData = undefined;
-       vm.model.graphWidth = 500;
        vm.model.maxBarWidth = 40;
-       
+      // vm.model.rightAxisFormatter = function(data) {return data;};
+       vm.model.rightAxisFormatter = "timespan";
+
+
        function loadTestData() {
                 function onSuccess(response) {
-                    vm.model.data = response.data;
+                    vm.model.data = response.data.data;
                     vm.model.graphWidth = 0.8 * window.innerWidth;
                     vm.updateData();
                 }

@@ -1,13 +1,26 @@
 {
-     "color1": "#ebc11b",                                      
-     "color2": "#86d022",   
-     "barData":[
-         {"value1":50, "value2":510 , "label":"FLV01"},
-         {"value1":33, "value2":280 , "label":"FLV02"},
-         {"value1":16, "value2":80 , "label":"FLV03"},
-         {"value1":70, "value2":660 , "label":"FLV04"},
-         {"value1":40, "value2":570 , "label":"FLV05"}
-         
-         ]          
-                                   
+   "color1":"#ebc11b",
+   "color2":"#86d022",
+   "data":[
+      {"valueOne":336,"valueTwo":17770,"label":"FLV01"},
+      {"valueOne":343,"valueTwo":15205,"label":"FLV02"},
+      {"valueOne":364,"valueTwo":17195,"label":"FLV03"},
+      {"valueOne":311,"valueTwo":16174,"label":"FLV04"},
+      {"valueOne":311,"valueTwo":16278,"label":"FLV05"},
+      {"valueOne":377,"valueTwo":16832,"label":"FLV06"},
+      {"valueOne":348,"valueTwo":16931,"label":"FLV08"},
+      {"valueOne":132,"valueTwo":6343,"label":"FLV09"},
+      {"valueOne":352,"valueTwo":14896,"label":"FLV10"},
+      {"valueOne":349,"valueTwo":17240,"label":"FLV11"},
+      {"valueOne":366,"valueTwo":18866,"label":"FLV12"},
+      {"valueOne":365,"valueTwo":17969,"label":"FLV13"},
+      {"valueOne":358,"valueTwo":16232,"label":"FLV14"},
+      {"valueOne":356,"valueTwo":17126,"label":"FLV15"},
+      {"valueOne":345,"valueTwo":17332,"label":"FLV16"},
+      {"valueOne":361,"valueTwo":15229,"label":"FLV18"},
+      {"valueOne":359,"valueTwo":16477,"label":"FLV19"},
+      {"valueOne":348,"valueTwo":16354,"label":"FLV20"},
+      {"valueOne":327,"valueTwo":13901,"label":"FLV21"},
+      {"valueOne":353,"valueTwo":16665,"label":"FLV22"}
+   ]
 }

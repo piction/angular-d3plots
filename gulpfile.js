@@ -13,8 +13,10 @@
 		uglify = require('gulp-uglify'),
 		util = require('gulp-util'),
 		uncache = require('gulp-uncache'),
-		runSequence = require('run-sequence');
-	    util.log('gulp task');
+		runSequence = require('run-sequence'),
+		typings = require('gulp-typings'),
+		webpack = require('webpack-stream');
+	util.log('gulp task');
 	var LessPluginAutoPrefix = require('less-plugin-autoprefix'),
 		autoprefix= new LessPluginAutoPrefix({browsers: ["last 2 versions"]});
 	var jsDependencies = [
@@ -35,7 +37,13 @@
             'external_scripts/bower_components/bootstrap/dist/css/bootstrap.min.css',
             'external_scripts/bower_components/angular-bootstrap-colorpicker/css/colorpicker.min.css'
 		];
-        
+    
+	var tsSource = ['app/**/*.ts'];
+	var jsSource = ['app/**/*.js', 'dev/app.js'];
+	var outputFolder = 'dev'; // default
+	var workFolder = 'work';
+	var tsCompiledFilename = 'app.compiled.js';
+
 	gulp.task('html', function() {
 		return gulp.src('app/**/*.html')
 			.pipe(templateCache({
@@ -43,15 +51,23 @@
 				root: 'app/'
 			}))
 			.pipe(concat('app.js'))
-			.pipe(gulp.dest('dev'));
+			.pipe(gulp.dest(outputFolder));
 	});
 
-	gulp.task('compile-javascript', ['html'], function() {
-	    return gulp.src(jsDependencies.concat(['app/**/*.js', 'dev/app.js']))
+	gulp.task('compile-typescript', function () {
+		return gulp.src(tsSource)
+            .pipe(webpack(require('./webpack.config.js')))
+            .pipe(concat(tsCompiledFilename))
+            .pipe(gulp.dest(workFolder));
+	});
+
+
+	gulp.task('compile-javascript', ['compile-typescript','html'], function() {
+	    return gulp.src(jsDependencies.concat(jsSource).concat(workFolder + "/" + tsCompiledFilename))
 			.pipe(sourcemaps.init())
 			.pipe(concat('app.js'))
 			.pipe(sourcemaps.write())
-			.pipe(gulp.dest('dev'))
+			.pipe(gulp.dest(outputFolder))
 			.pipe(connect.reload());
 	});
     
@@ -67,7 +83,7 @@
 			.pipe(sourcemaps.init())
 			.pipe(concat('main.css'))
 			.pipe(sourcemaps.write())
-			.pipe(gulp.dest('dev'))
+			.pipe(gulp.dest(outputFolder))
 			.pipe(connect.reload());
 	});
     
@@ -76,7 +92,7 @@
         return gulp.src([ 
             'app/module/bilevelPartion/bilevelPartionTestData.json',
             'app/module/dualBarChart/dualBarChartTestData.json'])
-        .pipe(gulp.dest('dev/testData'));
+        .pipe(gulp.dest(outputFolder+'/testData'));
     });
     
 	gulp.task('copy-index', function() {
@@ -84,18 +100,18 @@
 			.pipe(uncache({
 				append: 'time'
 			}))
-			.pipe(gulp.dest('dev'))
+			.pipe(gulp.dest(outputFolder))
 			.pipe(connect.reload());
 	});
 
 	gulp.task('copy-modernizr', function() {
 		return gulp.src('bower_components/modernizr/modernizr.js')
-			.pipe(gulp.dest('dev'));
+			.pipe(gulp.dest(outputFolder));
 	});
     
 	gulp.task('clear-dev', function() {
 		var deferred = Q.defer();
-		del(['dev/**/*.*', 'dev/fonts', 'dev/test'], function() {
+		del([outputFolder+'/**/*.*', outputFolder +'/fonts', outputFolder +'/test'], function() {
 			deferred.resolve();
 		});
 		return deferred.promise;
@@ -105,11 +121,12 @@
 	gulp.task('start-server', function() {
 		connect.server({
 			livereload: true,
-			root: 'dev'
+			root: outputFolder
 		});
 	});
 	gulp.task('watch-changes', function() {
 		gulp.watch('app/**/*.js', ['compile-javascript']);
+		gulp.watch('app/**/*.ts', ['compile-javascript']);
 		gulp.watch('app/**/*.html', ['compile-javascript']);
 		gulp.watch('app/**/*.scss', ['compile-style']);
 		gulp.watch('css/sass/**/*.scss', ['compile-style']);

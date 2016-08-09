@@ -19,3 +19,15 @@ textpath.labels-text {
 .bilevel-center-tip {
   pointer-events: none;
   cursor: pointer; }
+
+.axis-dualbars {
+  fill: #333; }
+
+.axis-dualbars path {
+  fill: none;
+  stroke: #333; }
+
+.axis-dualbars line {
+  fill: none;
+  stroke: #333;
+  shape-rendering: crispEdges; }

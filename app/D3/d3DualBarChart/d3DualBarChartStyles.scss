@@ -1,0 +1,14 @@
+$axis-color: #333;
+
+.axis-dualbars {
+    fill:$axis-color;
+} 
+.axis-dualbars path {
+    fill: none;
+    stroke:$axis-color;
+}
+.axis-dualbars line {
+    fill: none;
+    stroke:$axis-color;
+    shape-rendering: crispEdges;
+}

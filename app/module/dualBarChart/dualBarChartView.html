@@ -9,6 +9,10 @@
                 Graph Height:
                 <input type="number" name="value" ng-model="vm.model.graphHeight">
             </label>
+             <label>
+                Graph Width:
+                <input type="number" name="value" ng-model="vm.model.graphWidth">
+            </label>
                <label>
                 Maximum bar width:
                 <input type="number" name="value" ng-model="vm.model.maxBarWidth">
@@ -21,10 +25,12 @@
 
 <d3-dual-bar-chart 
     data="vm.model.data" 
-    height={{vm.model.graphHeight}}
-    width={{vm.model.graphWidth}}
-    max-bar-width = {{vm.model.maxBarWidth}}
+    height="vm.model.graphHeight"
+    width="vm.model.graphWidth"
+    max-bar-width="vm.model.maxBarWidth"
+    right-y-axis-formatter="vm.model.rightAxisFormatter"
     ></d3-dual-bar-chart >
+
 
 
 <div> <label>Data Input:  </label></div>

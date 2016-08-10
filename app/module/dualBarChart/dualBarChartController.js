@@ -17,8 +17,8 @@
        vm.model.data = {};
        vm.model.jsonData = undefined;
        vm.model.maxBarWidth = 40;
-      // vm.model.rightAxisFormatter = function(data) {return data;};
        vm.model.rightAxisFormatter = "timespan";
+        vm.model.leftAxisFormatter = function(data) {return "# " + data;};
 
 
        function loadTestData() {

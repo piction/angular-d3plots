@@ -118,6 +118,7 @@ interface ID3DualBarChartScope extends ng.IScope {
     colorTwo?: string;
     leftYAxisFormatter: any;
     rightYAxisFormatter: any;
+    fontSize?:number;
 }
 
 class D3DualBarChart {
@@ -130,27 +131,26 @@ class D3DualBarChart {
         colorOne: '@?',
         colorTwo: '@?',
         leftYAxisFormatter: '=?',
-        rightYAxisFormatter: '=?'
+        rightYAxisFormatter: '=?',
+        fontSize:'=?'
     };
 
-    private static DEFAULT_HEIGHT: number = 500;
-    private static DEFAULT_WIDTH: number = 500;
+    private static DEFAULT_SIZE: number = 500;
     private static DEFAULT_MAX_BAR_WIDTH: number = 50;
     private static DEFAULT_COLOR_ONE: string = "#fdb81e";
     private static DEFAULT_COLOR_TWO: string = "#486983";
     private static DEFAULT_AXIS_FORMATTER: (value: any) => string = (value) => value;
     
-    private static FONT_SIZE: number = 15;
     private static Y_AXIS_MARGIN: number = 40;
     private static MARGIN: number = 15;
     private static LABEL_ROTATION_ANGLE: number = 40;
     private static MINIMUM_BAR_SPACING: number = 2;
-    private static NUMBER_OF_STEPS_RIGHT_AXIS: number = 10;
-
     
     private data: ID3DualBarChartEntry[];
     private height: number;
     private width: number;
+    private fontSize: number;
+    private fontHeight:number;
     private maxBarWidth: number;
     private colorOne: string;
     private colorTwo: string;
@@ -171,28 +171,28 @@ class D3DualBarChart {
                 this.initializeParameters(scope);
                 this.render();
             });
-
-            elem.resize(() => {
-             this.render();
-            })
-
-              this.render();
+            elem.resize(() => {this.render();})
+            this.render();
         };
     }
 
     private initializeParameters(scope: ID3DualBarChartScope) {
+
+        var heightFontSizeRatio = parseFloat($('span').css('line-height')) / parseFloat($('span').css('font-size'));
         this.data = scope.data;
-        this.height = parseInt(scope.height) || D3DualBarChart.DEFAULT_HEIGHT;
-        this.width = parseInt(scope.width) || D3DualBarChart.DEFAULT_HEIGHT;
+        this.height = parseInt(scope.height) || D3DualBarChart.DEFAULT_SIZE;
+        this.width = parseInt(scope.width) || D3DualBarChart.DEFAULT_SIZE;
         this.maxBarWidth = parseInt(scope.maxBarWidth) || D3DualBarChart.DEFAULT_MAX_BAR_WIDTH;
         this.colorOne = scope.colorOne || D3DualBarChart.DEFAULT_COLOR_ONE;
         this.colorTwo = scope.colorTwo || D3DualBarChart.DEFAULT_COLOR_TWO;
+        this.fontSize =  scope.fontSize || 11;
+        heightFontSizeRatio = heightFontSizeRatio || 1.4;
+        this.fontHeight = this.fontSize / heightFontSizeRatio;
         if( typeof scope.leftYAxisFormatter != 'undefined' && scope.leftYAxisFormatter=="timespan") {
             this.isValueOneTimeSpan = true;
         } else {
              this.leftYAxisFormatter = scope.leftYAxisFormatter || D3DualBarChart.DEFAULT_AXIS_FORMATTER;
         }
-        console.log("show my timespan stuff",scope.rightYAxisFormatter );
         if( typeof scope.rightYAxisFormatter != 'undefined' && scope.rightYAxisFormatter=="timespan") {
             this.isValueTwoTimeSpan = true;
         } else {
@@ -204,28 +204,24 @@ class D3DualBarChart {
         var maxValueOne = _.max(this.data, v => v.valueOne).valueOne;
         var maxValueTwo = _.max(this.data, v => v.valueTwo).valueTwo;
         
-        var steps = Math.floor(calculatedGraphHeight / (2.3 * D3DualBarChart.FONT_SIZE));
+        var steps = Math.floor(calculatedGraphHeight / (2.5 * this.fontHeight));
     
     // LEFT AXIS
         var leftY = d3.scale.linear().range([calculatedGraphHeight, 0]).domain([0, maxValueOne]);
-        var leftYAxis = d3.svg.axis()
-            .scale(leftY)
-            .orient("left");
+        var leftYAxis = d3.svg.axis().scale(leftY).orient("left");
         
         if(this.isValueOneTimeSpan) {
-                let timeSpan = new TimeSpan(maxValueTwo);
+                let timeSpan = new TimeSpan(maxValueOne);
                 let timeInterval  = timeSpan.getFormater(steps);
                 leftYAxis.tickFormat(timeInterval.formatHandler);
-                leftYAxis.tickValues(d3.range(0, maxValueTwo, timeInterval.stepSize));
+                leftYAxis.tickValues(d3.range(0,maxValueOne, timeInterval.stepSize));
         } else{
             leftYAxis.ticks(steps)
             leftYAxis.tickFormat( this.leftYAxisFormatter);
         }
     // RIGHT AXIS
-        var rightY = d3.scale.linear().range([calculatedGraphHeight, 0]).domain([0, maxValueTwo]);
-        var rightYAxis = d3.svg.axis()
-            .scale(rightY)
-            .orient("right");
+       var rightY = d3.scale.linear().range([calculatedGraphHeight, 0]).domain([0, maxValueTwo]);
+       var rightYAxis = d3.svg.axis().scale(rightY).orient("right");
        if(this.isValueTwoTimeSpan) {
                 let timeSpan = new TimeSpan(maxValueTwo);
                 let timeInterval  = timeSpan.getFormater(steps);
@@ -235,18 +231,9 @@ class D3DualBarChart {
             rightYAxis.ticks(steps)
             rightYAxis.tickFormat( this.rightYAxisFormatter);
         }
-
-
         return {
-            left: {
-                    axis : leftYAxis,
-                    y: leftY
-            },
-              right: {
-                    axis : rightYAxis,
-                    y: rightY
-            },
-    
+            left: { axis: leftYAxis, y: leftY },
+            right: {  axis: rightYAxis, y: rightY }    
         }
     }
 
@@ -256,13 +243,12 @@ class D3DualBarChart {
         this.svg.selectAll('*').remove();
         this.svg.attr('width', this.width).attr('height', this.height);
 
-        var marginLabelHeight = D3DualBarChart.FONT_SIZE + 10;
+        var marginLabelHeight = this.fontHeight + 10;
         var graphHeight = this.height - D3DualBarChart.MARGIN * 2 - marginLabelHeight;
 
         var YAxises = this.GetBothYAxis(graphHeight);
 
-        var marginContainer = this.svg.append('g')
-            .attr('transform', this.translate(D3DualBarChart.MARGIN, D3DualBarChart.MARGIN));
+        var marginContainer = this.svg.append('g').attr('transform', this.translate(D3DualBarChart.MARGIN, D3DualBarChart.MARGIN));
 
         var leftYAxisGroup = marginContainer.append('g').call(YAxises.left.axis);
         var rightYAxisGroup = marginContainer.append('g').call(YAxises.right.axis);
@@ -273,12 +259,12 @@ class D3DualBarChart {
         var graphWidth = this.width - D3DualBarChart.MARGIN * 2 - leftAxisWidth - rightAxisWidth;
 
         var dualBarWidth = graphWidth / this.data.length;
-        var labelWidth = this.d3UtilitiesService.getMaxWidthOfTexts($.map(this.data, (d) => d.label), D3DualBarChart.FONT_SIZE);
+        var labelWidth = this.d3UtilitiesService.getMaxWidthOfTexts($.map(this.data, (d) => d.label), this.fontSize);
         var rotateLabel: boolean = dualBarWidth < labelWidth;
         return {
             rotateLabel: rotateLabel,
             labelWidth: labelWidth,
-            labelHeigth: D3DualBarChart.FONT_SIZE,
+            labelHeigth: this.fontHeight,
             dualBarWidth: dualBarWidth
         };        
     }
@@ -291,7 +277,7 @@ class D3DualBarChart {
         this.svg.selectAll('*').remove(); 
         this.svg.attr('width', this.width).attr('height', this.height);
 
-        var marginLabelHeight = D3DualBarChart.FONT_SIZE + 10;
+        var marginLabelHeight =this.fontHeight + 10;
 
         var rotation = 0;
         if(rotationMeasurements.rotateLabel) {
@@ -304,43 +290,36 @@ class D3DualBarChart {
             rotation = alpha*180/Math.PI;
             var angleRadians = rotation * Math.PI / 180;
             var height1 = Math.cos(angleRadians) * rotationMeasurements.labelWidth;
-            var height2 = Math.sin(angleRadians) * D3DualBarChart.FONT_SIZE;
+            var height2 = Math.sin(angleRadians) * this.fontHeight;
             marginLabelHeight = height1 + height2 + 10;
         }
 
         var graphHeight = this.height - D3DualBarChart.MARGIN * 2 - marginLabelHeight;
-
         var YAxises = this.GetBothYAxis(graphHeight);
 
-        var marginContainer = this.svg.append('g')
-            .attr('transform', this.translate(D3DualBarChart.MARGIN, D3DualBarChart.MARGIN));
+        var marginContainer = this.svg.append('g').attr('transform', this.translate(D3DualBarChart.MARGIN, D3DualBarChart.MARGIN));
 
         var leftYAxisGroup = marginContainer.append('g')
                     .attr('class','axis-dualbars')
                     .call(YAxises.left.axis);
            leftYAxisGroup.selectAll('text')
                      .style('fill', this.colorOne)
-	                .style('font-size', D3DualBarChart.FONT_SIZE)  ;    
+	                .style('font-size',this.fontSize)  ;    
 
         var rightYAxisGroup = marginContainer.append('g')
                     .attr('class','axis-dualbars')
                     .call(YAxises.right.axis);
             rightYAxisGroup.selectAll('text')
                      .style('fill', this.colorTwo)
-	                .style('font-size', D3DualBarChart.FONT_SIZE) ;    
+	                .style('font-size', this.fontSize) ;    
 
         var leftAxisWidth = (<SVGSVGElement>(<any>leftYAxisGroup.node())).getBBox().width;
         var rightAxisWidth = (<SVGSVGElement>(<any>rightYAxisGroup.node())).getBBox().width;        
-                
         var graphWidth = this.width - D3DualBarChart.MARGIN * 2 - leftAxisWidth - rightAxisWidth;
-
         var dualBarWidth = graphWidth / this.data.length;
-        var labelWidth = this.d3UtilitiesService.getMaxWidthOfTexts($.map(this.data, (d) => d.label), D3DualBarChart.FONT_SIZE);
+        var labelWidth = this.d3UtilitiesService.getMaxWidthOfTexts($.map(this.data, (d) => d.label), this.fontSize);
 
-        var extraBottomMargin = rotationMeasurements.rotateLabel
-            ? Math.cos(Math.PI * D3DualBarChart.LABEL_ROTATION_ANGLE / 180) * labelWidth
-            : D3DualBarChart.FONT_SIZE * 1.2;
-              
+             
         var barsOffset: number = 1;
         var singleBarWidth: number = (dualBarWidth - D3DualBarChart.MINIMUM_BAR_SPACING) / 2;
         if( this.maxBarWidth * 2 < dualBarWidth ) {                        
@@ -350,6 +329,7 @@ class D3DualBarChart {
 
         leftYAxisGroup.attr('transform', this.translate(leftAxisWidth, 0));
         rightYAxisGroup.attr('transform', this.translate(graphWidth + leftAxisWidth, 0));
+
         var dataGroup = marginContainer.append("g").attr('transform', this.translate(leftAxisWidth, 0));
         var labelGroup = marginContainer.append("g").attr('transform', this.translate(leftAxisWidth, graphHeight + 10 + (marginLabelHeight/2)));
                         
@@ -382,15 +362,15 @@ class D3DualBarChart {
             .attr('text-anchor', 'middle')
             .text(d => d.label)
             .style("fill", '#6f6e6d')
-	        .style("font-size", D3DualBarChart.FONT_SIZE)
+	        .style("font-size",this.fontSize)
             .attr("transform", () => {
                 return rotationMeasurements.rotateLabel ? 'rotate(' + rotation + ')' : '';
             });
         
     }
 
-    private translate(width: number, height: number): string {
-        return `translate(${width}, ${height})`;
+    private translate(horizontal: number, vertical: number): string {
+        return `translate(${horizontal}, ${vertical})`;
     }
 }
 

@@ -12,6 +12,7 @@
 			width = width || height;
 			strokeRatio = strokeRatio || 100;
 			extraFontScale = extraFontScale || 1;
+			var fontSize = 10 * extraFontScale;
 			var rootData = angular.copy(dataIn);     // make a copy to allow extending this data
 			var uniqueGraphIdprefix = "Bilevel-Id-" + Math.floor((Math.random() * 1000000) + 1) + "-";
 
@@ -37,7 +38,7 @@
 				.startAngle(function (d) {return d.x;})
 				.endAngle(function (d) {return d.x + d.dx - .01 / (d.depth + .5);})
 				.innerRadius(function (d) {	return ((strokeWidth - 3) * radius / strokeWidth) + radius / strokeWidth * d.depth;	})
-				.outerRadius(function (d) {	return ((strokeWidth - 3) * radius / strokeWidth) + radius / strokeWidth * (d.depth + 1) - 1;});
+				.outerRadius(function (d) {	return ((strokeWidth - 3) * radius / strokeWidth) + radius / strokeWidth * (d.depth + 1) -1;});
 	
 
 			function format_number(x) {	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");}
@@ -150,13 +151,15 @@
 			function drawTextsOnArc(textsElements) {
 				textsElements
 					.attr("dy", function(d) {
-						var offset = (radius / strokeWidth)/2;
-						var rotation = getRotationDeg(d)
-						return rotation > 0 && rotation < 180 ?  -offset : offset;
+						var halfStroke = (radius / strokeWidth)/2 ;
+						var rotation = getRotationDeg(d);
+						var offset = rotation > 0 && rotation < 180 ?  -(halfStroke - (fontSize*0.9)/2) : halfStroke + (fontSize*0.9)/2;
+						return offset;
 					})
 					.append("textPath")
 					.attr("startOffset", "50%")
 					.attr("class","labels-text")
+					.style("font-size",fontSize)
 					.style("text-anchor", "middle")					
 					.attr("xlink:href", function (d) { return '#' + createTextPathId(d); })
 					.text(function (d) { return d.name; });
@@ -205,7 +208,6 @@
 			}
 
 			function zoomOut(p) {
-			
 				if (!p || !p.parent || $.isEmptyObject(p.parent)) return;
 				zoom(p.parent, p);
 			}

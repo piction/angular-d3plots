@@ -11,7 +11,6 @@ circle.bilevel-partion-center {
 
 textpath.labels-text {
   letter-spacing: 1px;
-  font-size: 11px;
   fill: #2F4F4F;
   pointer-events: none;
   cursor: pointer; }
@@ -21,13 +20,13 @@ textpath.labels-text {
   cursor: pointer; }
 
 .axis-dualbars {
-  fill: #333; }
+  fill: #2B3843; }
 
 .axis-dualbars path {
   fill: none;
-  stroke: #333; }
+  stroke: #2B3843; }
 
 .axis-dualbars line {
   fill: none;
-  stroke: #333;
+  stroke: #2B3843;
   shape-rendering: crispEdges; }
